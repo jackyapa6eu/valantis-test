@@ -18,3 +18,13 @@
 .items-notifications p {
     margin: 0;
 }
+
+@media screen and (max-width: 755px) {
+    .items-main-container {
+        grid-template-rows: 90px 1fr 50px;
+    }
+
+    .items-container {
+        height: calc(100vh - 190px);
+    }
+}

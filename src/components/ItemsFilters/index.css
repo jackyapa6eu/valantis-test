@@ -1,7 +1,26 @@
 .items-selects {
     display: grid;
+    align-items: start;
     grid-template-columns: 180px 180px 180px 180px;
     gap: 6px;
     justify-content: center;
     padding: 12px 6px;
+}
+
+@media screen and (max-width: 755px) {
+    .items-selects {
+        grid-template-columns: 180px 180px 180px;
+    }
+}
+
+@media screen and (max-width: 565px) {
+    .items-selects {
+        grid-template-columns: 180px 180px;
+    }
+}
+
+@media screen and (max-width: 390px) {
+    .items-selects {
+        grid-template-columns: 150px 150px;
+    }
 }
