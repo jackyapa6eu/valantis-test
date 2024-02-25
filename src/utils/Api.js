@@ -93,7 +93,7 @@ const todayTimestamp = moment().utc().format("YYYYMMDD");
 const password = "Valantis";
 
 const mainApi = new Api({
-  mainUrl: process.env.API_URL || "http://api.valantis.store:40000", // "http://api.valantis.store:40000",
+  mainUrl: process.env.REACT_APP_API_URL || "http://api.valantis.store:40000",
   timeStamp: todayTimestamp,
   password,
 });
