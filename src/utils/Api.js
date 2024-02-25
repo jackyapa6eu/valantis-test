@@ -15,10 +15,23 @@ class Api {
     };
   }
 
-  getResponseData = async (res, options) => {
+  getResponseData = async (res) => {
     if (res.ok) return res.json();
-    const errorData = await res.json();
-    return Promise.reject(new Error(`Request failed: ${errorData.message}`));
+    try {
+      const errorData = await res.json();
+      console.error(
+        `Запрос завершился с ошибкой. Статус: ${res.status}: ${errorData.message}`,
+      );
+      return Promise.reject(
+        new Error(
+          `Request failed with status ${res.status}: ${errorData.message}`,
+        ),
+      );
+    } catch (error) {
+      return Promise.reject(
+        new Error(`Error parsing JSON response: ${error.message}`),
+      );
+    }
   };
 
   fetcher = async ({ path = "", method, action, params }) => {
@@ -30,15 +43,20 @@ class Api {
       action,
       params,
     };
-
-    if (params) {
-      options.body = JSON.stringify(req);
-    }
+    if (!params) delete req.params;
+    options.body = JSON.stringify(req);
 
     const clonedOptions = JSON.parse(JSON.stringify(options));
 
-    const response = await fetch(`${this.mainUrl}/${path}`, options);
-    return this.getResponseData(response, clonedOptions);
+    // const response = await fetch(`${this.mainUrl}/${path}`, options);
+    // return this.getResponseData(response, clonedOptions);
+    try {
+      const response = await fetch(`${this.mainUrl}/${path}`, options);
+      return this.getResponseData(response, clonedOptions);
+    } catch (error) {
+      console.error(`При попытке запроса произошла ошибка: ${error.message}`);
+      return Promise.reject(new Error(`Error fetching data: ${error.message}`));
+    }
   };
 
   getIds = (params) => {
@@ -50,6 +68,24 @@ class Api {
   getItems = (ids) => {
     const params = { ids };
     return this.fetcher({ action: "get_items", params });
+  };
+
+  getFields = (field) => {
+    const req = {
+      action: "get_fields",
+      params: { field },
+    };
+
+    if (!field) delete req.params;
+    return this.fetcher(req);
+  };
+
+  getFilter = (reqObj) => {
+    const req = {
+      action: "filter",
+      params: reqObj,
+    };
+    return this.fetcher(req);
   };
 }
 
